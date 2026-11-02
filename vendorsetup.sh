@@ -47,12 +47,15 @@ export OF_USE_GREEN_LED="0"
 
 #features
 export FOX_ENABLE_APP_MANAGER="1"
-export OF_SUPPORT_OZIP_DECRYPTION=1
-export FOX_USE_NANO_EDITOR="1"
-export FOX_USE_XZ_UTILS="1"
+#export OF_SUPPORT_OZIP_DECRYPTION=1
 
 #reduce the size for booting
 export FOX_REMOVE_BASH="1"
+export FOX_EXCLUDE_NANO_EDITOR="1"
+export FOX_DRASTIC_SIZE_REDUCTION="1"
+export FOX_USE_NANO_EDITOR="0"
+export FOX_USE_XZ_UTILS="0"
+export OF_SUPPORT_OZIP_DECRYPTION="0"
 
 #settings
 export FOX_SETTINGS_ROOT_DIRECTORY="/persist/OFRP"
