@@ -1,0 +1,72 @@
+service wmt_loader /vendor/bin/wmt_loader
+    class main
+    user system
+    group system
+    oneshot
+    seclabel u:r:recovery:s0
+
+service wmt_launcher  /vendor/bin/wmt_launcher -p /vendor/firmware/
+    class main
+    user system
+    group system
+    oneshot
+    seclabel u:r:recovery:s0
+
+service netd /system/bin/netd
+    class main
+    socket netd stream 0660 root system
+    socket dnsproxyd stream 0660 root inet
+    socket mdns stream 0660 root system
+    socket fwmarkd stream 0660 root inet
+
+
+service vndservicemanager /vendor/bin/vndservicemanager /dev/vndbinder
+    writepid /dev/cpuset/system-background/tasks
+    seclabel u:r:recovery:s0
+
+service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
+    -Dnl80211 -iwlan0 -dd -O/data/misc/wifi/sockets \
+    -c/data/misc/wifi/wpa_supplicant.conf
+    disabled
+    oneshot
+    seclabel u:r:recovery:s0
+
+
+service load_net_module /system/bin/load_net_module.sh
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+    oneshot
+
+service start_net_service /system/bin/start_net_service.sh
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+    oneshot
+
+service stop_net_service /system/bin/stop_net_service.sh
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+    oneshot
+
+
+on init
+start load_net_module
+
+on property:start_wifi=1
+start start_net_service
+setprop start_wifi 0
+
+on property:stop_wifi=1
+start stop_net_service
+setprop stop_wifi 0
+
+
+on property:vendor.connsys.driver.ready=yes
+   insmod /vendor/lib/modules/wmt_chrdev_wifi.ko
+   insmod /vendor/lib/modules/wlan_drv_gen3.ko
+   insmod /vendor/lib/modules/wlan_drv_gen4m.ko
